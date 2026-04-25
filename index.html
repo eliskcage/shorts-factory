@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SHORTS FACTORY — Make Your Short</title>
+<meta name="description" content="Write your words. AI makes your short. Under 3 minutes. Free.">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#c8c8c8;font-family:Georgia,serif;min-height:100vh}
+a{color:#00ff88;text-decoration:none}
+
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:15px 25px;border-bottom:1px solid #111}
+.top-bar .logo{color:#fff;font-size:1.1rem;letter-spacing:0.15em}
+.top-bar .logo span{color:#00ff88}
+.top-bar .auth-btn{border:1px solid #333;color:#888;padding:6px 18px;font-size:0.8rem;letter-spacing:0.1em;cursor:pointer;background:none;transition:all 0.3s;font-family:inherit}
+.top-bar .auth-btn:hover{border-color:#00ff88;color:#00ff88}
+
+.container{max-width:800px;margin:0 auto;padding:40px 20px}
+
+h1{font-size:clamp(1.8rem,4vw,3rem);color:#fff;text-align:center;font-weight:400;letter-spacing:0.1em;margin-bottom:8px}
+.subtitle{text-align:center;color:#555;font-size:0.85rem;letter-spacing:0.25em;text-transform:uppercase;margin-bottom:50px}
+
+.script-box{position:relative;margin-bottom:20px}
+.script-box textarea{width:100%;min-height:200px;background:#0a0a0a;border:1px solid #1a1a1a;color:#ddd;font-family:Georgia,serif;font-size:1rem;line-height:1.8;padding:20px;resize:vertical;transition:border-color 0.3s}
+.script-box textarea:focus{outline:none;border-color:#00ff8844}
+.script-box textarea::placeholder{color:#333}
+.char-count{position:absolute;bottom:8px;right:12px;font-size:0.75rem;color:#333}
+
+.style-row{display:flex;gap:8px;margin-bottom:25px;flex-wrap:wrap}
+.style-btn{background:#0a0a0a;border:1px solid #1a1a1a;color:#666;padding:8px 16px;font-size:0.8rem;cursor:pointer;transition:all 0.3s;font-family:inherit}
+.style-btn:hover,.style-btn.active{border-color:#00ff88;color:#00ff88}
+
+.generate-btn{display:block;width:100%;padding:16px;background:none;border:1px solid #00ff88;color:#00ff88;font-size:1rem;letter-spacing:0.3em;text-transform:uppercase;cursor:pointer;font-family:inherit;transition:all 0.3s}
+.generate-btn:hover{background:#00ff88;color:#000}
+.generate-btn:disabled{opacity:0.3;cursor:not-allowed}
+.generate-btn:disabled:hover{background:none;color:#00ff88}
+
+.progress{display:none;margin-top:30px;text-align:center}
+.progress .status{color:#00ff88;font-size:0.9rem;letter-spacing:0.1em;margin-bottom:15px}
+.progress-bar{width:100%;height:3px;background:#111;overflow:hidden;border-radius:2px}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,#00ff88,#4488ff);width:0%;transition:width 0.5s}
+
+.result{display:none;margin-top:40px;text-align:center}
+.result video{width:100%;max-width:720px;border:1px solid #1a1a1a;margin-bottom:20px}
+.result .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.result .actions a,.result .actions button{border:1px solid #333;color:#888;padding:10px 24px;font-size:0.8rem;letter-spacing:0.1em;cursor:pointer;background:none;transition:all 0.3s;font-family:inherit;text-decoration:none}
+.result .actions a:hover,.result .actions button:hover{border-color:#00ff88;color:#00ff88}
+
+.scenes-preview{display:none;margin-top:30px}
+.scenes-preview h3{color:#444;font-size:0.8rem;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:15px;text-align:center}
+.scenes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.scene-card{background:#0a0a0a;border:1px solid #111;padding:10px;font-size:0.75rem;color:#555;line-height:1.5}
+.scene-card .num{color:#00ff88;font-size:0.7rem;margin-bottom:4px}
+
+.how{margin-top:80px;border-top:1px solid #111;padding-top:40px}
+.how h2{text-align:center;color:#fff;font-size:1.2rem;font-weight:400;letter-spacing:0.1em;margin-bottom:30px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+.step{text-align:center;padding:20px}
+.step .num{font-size:2rem;color:#00ff8833;margin-bottom:10px}
+.step .label{color:#fff;font-size:0.9rem;margin-bottom:8px}
+.step p{color:#555;font-size:0.8rem;line-height:1.6}
+
+.footer{text-align:center;margin-top:80px;padding:30px;border-top:1px solid #0a0a0a}
+.footer a{color:#333;font-size:0.8rem;margin:0 12px}
+.footer a:hover{color:#00ff88}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+<div class="logo">SHORTS<span>FACTORY</span></div>
+<button class="auth-btn" onclick="authGoogle()">SIGN IN WITH GOOGLE</button>
+</div>
+
+<div class="container">
+
+<h1>MAKE YOUR SHORT</h1>
+<div class="subtitle">Write &middot; Generate &middot; Share &middot; Earn</div>
+
+<div class="script-box">
+<textarea id="script" maxlength="2000" placeholder="Write your script here. Each sentence becomes a scene.
+
+Example:
+The old world promised you a career. AI took it in a Tuesday afternoon. But here's what nobody told you. Your job was a shadow of the real one. The real job still exists. We just renamed it to what it actually is."></textarea>
+<div class="char-count"><span id="chars">0</span>/2000</div>
+</div>
+
+<div class="style-row">
+<button class="style-btn active" data-style="cinematic dark sci-fi">Sci-Fi</button>
+<button class="style-btn" data-style="neon cyberpunk noir">Cyberpunk</button>
+<button class="style-btn" data-style="clean minimalist futuristic white">Clean</button>
+<button class="style-btn" data-style="gritty documentary photorealistic">Documentary</button>
+<button class="style-btn" data-style="anime digital art vibrant">Anime</button>
+<button class="style-btn" data-style="oil painting classical dramatic lighting">Painted</button>
+</div>
+
+<button class="generate-btn" id="gen-btn" onclick="generate()">GENERATE SHORT</button>
+
+<div class="scenes-preview" id="scenes-preview">
+<h3>Your Scenes</h3>
+<div class="scenes-grid" id="scenes-grid"></div>
+</div>
+
+<div class="progress" id="progress">
+<div class="status" id="progress-status">Splitting script into scenes...</div>
+<div class="progress-bar"><div class="fill" id="progress-fill"></div></div>
+</div>
+
+<div class="result" id="result">
+<video id="video" controls playsinline></video>
+<div class="actions">
+<a id="download-link" download="my-short.mp4">DOWNLOAD MP4</a>
+<button onclick="shareShort()">SHARE</button>
+<button onclick="location.reload()">MAKE ANOTHER</button>
+</div>
+</div>
+
+<div class="how">
+<h2>HOW IT WORKS</h2>
+<div class="steps">
+<div class="step">
+<div class="num">1</div>
+<div class="label">Write</div>
+<p>Type your story, pitch, or manifesto. Each sentence becomes a 10-second scene.</p>
+</div>
+<div class="step">
+<div class="num">2</div>
+<div class="label">Generate</div>
+<p>Grok AI creates a unique image for each scene. Your words burn onto each frame.</p>
+</div>
+<div class="step">
+<div class="num">3</div>
+<div class="label">Share</div>
+<p>Download your MP4 or share the link. Under 3 minutes. Ready for any platform.</p>
+</div>
+<div class="step">
+<div class="num">4</div>
+<div class="label">Earn</div>
+<p>Your short recruits. Your rank climbs. Your dividends grow. 51% yours forever.</p>
+</div>
+</div>
+</div>
+
+</div>
+
+<div class="footer">
+<a href="/john-connor.html">Operation John Connor</a>
+<a href="/portfolio.html">Portfolio</a>
+<a href="/join.html">Join</a>
+<a href="https://github.com/eliskcage/shorts-factory">GitHub</a>
+</div>
+
+<script>
+var selectedStyle='cinematic dark sci-fi';
+
+document.getElementById('script').addEventListener('input',function(){
+  document.getElementById('chars').textContent=this.value.length;
+  previewScenes(this.value);
+});
+
+document.querySelectorAll('.style-btn').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.style-btn').forEach(function(b){b.classList.remove('active')});
+    this.classList.add('active');
+    selectedStyle=this.dataset.style;
+  });
+});
+
+function previewScenes(text){
+  var lines=text.split(/[.\n]+/).map(function(s){return s.trim()}).filter(function(s){return s.length>5});
+  if(lines.length===0){document.getElementById('scenes-preview').style.display='none';return}
+  document.getElementById('scenes-preview').style.display='block';
+  var grid=document.getElementById('scenes-grid');
+  grid.innerHTML='';
+  lines.slice(0,12).forEach(function(line,i){
+    var card=document.createElement('div');
+    card.className='scene-card';
+    card.innerHTML='<div class="num">SCENE '+(i+1)+'</div>'+line;
+    grid.appendChild(card);
+  });
+  var dur=Math.min(lines.length,12)*10;
+  document.querySelector('.scenes-preview h3').textContent='YOUR SCENES ('+Math.min(lines.length,12)+' scenes, ~'+dur+'s)';
+}
+
+function generate(){
+  var script=document.getElementById('script').value.trim();
+  if(!script){alert('Write something first.');return}
+
+  var btn=document.getElementById('gen-btn');
+  btn.disabled=true;
+  btn.textContent='GENERATING...';
+
+  document.getElementById('progress').style.display='block';
+  document.getElementById('result').style.display='none';
+
+  fetch('/shorts/api/generate.php',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({script:script,style:selectedStyle})
+  })
+  .then(function(r){return r.json()})
+  .then(function(data){
+    if(data.error){
+      updateProgress('Error: '+data.error,0);
+      btn.disabled=false;
+      btn.textContent='GENERATE SHORT';
+      return;
+    }
+    if(data.status==='done'){
+      showResult(data.url);
+    }else{
+      pollJob(data.job_id);
+    }
+  })
+  .catch(function(err){
+    updateProgress('Network error: '+err.message,0);
+    btn.disabled=false;
+    btn.textContent='GENERATE SHORT';
+  });
+}
+
+function pollJob(jobId){
+  fetch('/shorts/api/status.php?id='+jobId)
+  .then(function(r){return r.json()})
+  .then(function(data){
+    if(data.status==='done'){
+      showResult(data.url);
+    }else if(data.status==='error'){
+      updateProgress('Error: '+(data.message||'Unknown error'),0);
+      document.getElementById('gen-btn').disabled=false;
+      document.getElementById('gen-btn').textContent='GENERATE SHORT';
+    }else{
+      var pct=0;
+      if(data.status==='generating_images'&&data.images_done&&data.total){
+        pct=(data.images_done/data.total)*70;
+        updateProgress('Generating image '+data.images_done+'/'+data.total+'...',pct);
+      }else if(data.status==='adding_text'){
+        updateProgress('Burning text onto frames...',75);
+      }else if(data.status==='stitching'){
+        updateProgress('Stitching video...',90);
+      }else{
+        updateProgress(data.status+'...',10);
+      }
+      setTimeout(function(){pollJob(jobId)},2000);
+    }
+  });
+}
+
+function updateProgress(msg,pct){
+  document.getElementById('progress-status').textContent=msg;
+  document.getElementById('progress-fill').style.width=pct+'%';
+}
+
+function showResult(url){
+  updateProgress('Done!',100);
+  document.getElementById('result').style.display='block';
+  document.getElementById('video').src=url;
+  document.getElementById('download-link').href=url;
+  document.getElementById('gen-btn').disabled=false;
+  document.getElementById('gen-btn').textContent='GENERATE SHORT';
+}
+
+function authGoogle(){
+  alert('Google sign-in coming soon. For now, generate freely.');
+}
+
+function shareShort(){
+  var url=document.getElementById('video').src;
+  if(navigator.share){
+    navigator.share({title:'My Short — ShortFactory',url:url});
+  }else{
+    navigator.clipboard.writeText(url).then(function(){alert('Link copied!')});
+  }
+}
+</script>
+</body>
+</html>
